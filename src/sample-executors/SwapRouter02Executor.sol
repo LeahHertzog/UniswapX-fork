@@ -16,9 +16,7 @@ contract SwapRouter02Executor is IReactorCallback, Owned {
     using SafeTransferLib for ERC20;
     using CurrencyLibrary for address;
 
-    /// @notice thrown if reactorCallback is called with a non-whitelisted filler
     error CallerNotWhitelisted();
-    /// @notice thrown if reactorCallback is called by an address other than the reactor
     error MsgSenderNotReactor();
 
     ISwapRouter02 private immutable swapRouter02;
@@ -27,16 +25,12 @@ contract SwapRouter02Executor is IReactorCallback, Owned {
     WETH private immutable weth;
 
     modifier onlyWhitelistedCaller() {
-        if (msg.sender != whitelistedCaller) {
-            revert CallerNotWhitelisted();
-        }
+        require(msg.sender == whitelistedCaller, "CallerNotWhitelisted");
         _;
     }
 
     modifier onlyReactor() {
-        if (msg.sender != address(reactor)) {
-            revert MsgSenderNotReactor();
-        }
+        require(msg.sender == address(reactor), "MsgSenderNotReactor");
         _;
     }
 
